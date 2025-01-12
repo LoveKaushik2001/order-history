@@ -37,7 +37,8 @@
       Current Cycle Order History for <%= output.name %> with customer ID: (<%=
       output.customerId %>)
     </h1>
-
+    <% if (parseInt(output.discount)) { %> You have attained a discount of <%=
+    output.discount %>% on your total billed amount. <% } %>
     <div class="date-row">
       <table class="order-table">
         <thead>
@@ -61,8 +62,9 @@
             <% let amountTotal = 0; %> <%
             Object.entries(skus).filter(([skuCode,qty]) => (qty.trim() !==
             "")).forEach(([skuCode, qty]) => { %> <%amountTotal +=
-            (parseInt(qty) * (output?.skusDetail?.[skuCode]?.[1]|| 1000)); %> <%
-            }) %>
+            (parseInt(qty) * ((parseInt(output?.isSub) ?
+            output?.skusDetail?.[skuCode]?.[2] :
+            output?.skusDetail?.[skuCode]?.[1])|| 1000)); %> <% }) %>
             <td><%= amountTotal %></td>
           </tr>
           <% } %> <% } %>

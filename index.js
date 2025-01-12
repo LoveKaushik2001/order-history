@@ -45,7 +45,9 @@ app.get("/", async (req, res) => {
   const skusNameCodes = heads.slice(2, skusNumber + 2);
   const skusDetail = getSkusDetail(metaInfo);
   const customerIndex = entries.findIndex(
-    (entry) => entry[0].split(" ").join("") === customerId.split(" ").join("")
+    (entry) =>
+      entry[0].split(" ").join("").trim() ===
+      customerId.split(" ").join("").trim()
   );
   if (customerIndex === -1) {
     return res.status(404).send("Unable to find data against this Customer Id");
@@ -55,8 +57,10 @@ app.get("/", async (req, res) => {
   output["customerId"] = customerInfo[0];
   output["name"] = customerInfo[1];
   output["skusDetail"] = skusDetail;
+  output["isSub"] = customerInfo[2];
+  output["discount"] = customerInfo[3];
   const dates = {};
-  let idx = 2;
+  let idx = 4;
   while (idx < customerInfo.length - 1) {
     const currDayOrders = {};
     skusNameCodes.forEach(
@@ -81,7 +85,11 @@ function getSkusDetail(data) {
   const result = {};
   data.forEach((item, index) => {
     const detail = item.split(",");
-    result[detail[0].trim()] = [detail[1].trim(), detail[2].trim()];
+    result[detail[0].trim()] = [
+      detail[1].trim(),
+      detail[2].trim(),
+      detail?.[3]?.trim() || detail?.[2]?.trim(),
+    ];
   });
   return result;
 }
