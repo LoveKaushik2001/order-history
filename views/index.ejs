@@ -5,71 +5,288 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Customer Orders</title>
     <style>
+      /* Global Styles */
       body {
-        font-family: Arial, sans-serif;
+        font-family: "Inter", sans-serif;
+        background-color: #fafafa; /* Subtle light grey for fresh modern look */
+        color: #333;
+        margin: 0;
+        padding: 0;
+        line-height: 1.6;
       }
+
       h1 {
         text-align: center;
-        margin-top: 20px;
+        margin-top: 40px;
+        color: #27ae60; /* Fresh green accent color */
+        font-size: 2.5em;
+        font-weight: 700;
+        letter-spacing: 1px;
       }
-      .order-table {
-        width: 80%;
+
+      /* Container for entire page to keep everything centered */
+      .container {
+        max-width: 1100px;
         margin: 0 auto;
-        border-collapse: collapse;
-        margin-top: 20px;
+        padding: 20px;
       }
+
+      /* Header Section */
+      .header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding: 10px;
+        background-color: #f1f7f4;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .header h1 {
+        margin: 0;
+        color: #27ae60;
+      }
+
+      .header p {
+        font-size: 1.1em;
+        color: #555;
+      }
+
+      /* Table Styling */
+      .order-table {
+        width: 100%;
+        margin: 20px 0;
+        border-collapse: collapse;
+        background-color: #fff;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
       .order-table th,
       .order-table td {
-        padding: 10px;
-        border: 1px solid #ddd;
+        padding: 18px;
         text-align: left;
+        font-size: 1.1em;
+        color: #444;
       }
+
       .order-table th {
-        background-color: #f2f2f2;
+        background-color: #2d6a4f; /* Deep green header for health-focused vibe */
+        color: white;
+        text-transform: uppercase;
+        font-weight: 600;
+        letter-spacing: 0.5px;
       }
-      .date-row {
+
+      .order-table td {
+        border-bottom: 1px solid #e0e0e0;
+      }
+
+      .order-table tr:last-child td {
+        border-bottom: none;
+      }
+
+      .order-table tr:hover {
+        background-color: #f1fdf4; /* Light green on hover */
+      }
+
+      /* Order Summary Section */
+      .order-summary {
+        margin-top: 30px;
+        background-color: #f9fdf8;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .order-summary h2 {
+        font-size: 1.8em;
+        color: #2d6a4f;
+        font-weight: 700;
+      }
+
+      .order-summary p {
+        font-size: 1.2em;
+        margin: 10px 0;
+        color: #444;
+      }
+
+      .order-summary .sku-details {
+        padding: 12px;
+        background-color: #e9f7e9;
+        border-radius: 6px;
+        margin: 8px 0;
+      }
+
+      .sku-details span {
+        color: #27ae60;
+        font-weight: bold;
+      }
+
+      .total-amount {
+        font-size: 1.5em;
+        font-weight: bold;
+        color: #e74c3c; /* Bright red for highlighting total amount */
         margin-top: 20px;
+      }
+
+      .discount-info {
+        background-color: #d1f7d1;
+        padding: 18px;
+        margin-top: 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        color: #27ae60;
+        font-size: 1.1em;
+      }
+
+      .discount-info span {
+        font-weight: bold;
+        color: #e74c3c; /* Red color to highlight discount information */
+      }
+
+      /* Notes Section */
+      .note {
+        margin-top: 50px;
+        font-size: 1.2em;
+        color: #666;
+        text-align: center;
+        line-height: 1.6;
+      }
+
+      .note span {
+        font-weight: bold;
+        color: #3498db;
+      }
+
+      .note a {
+        color: #3498db;
+        text-decoration: none;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .order-table th,
+        .order-table td {
+          padding: 12px;
+          font-size: 1em;
+        }
+
+        .summary,
+        .order-summary {
+          font-size: 1em;
+        }
+
+        .header h1 {
+          font-size: 2em;
+        }
+
+        .container {
+          padding: 10px;
+        }
+
+        .note {
+          font-size: 1em;
+        }
+      }
+
+      /* Button Style */
+      .cta-button {
+        background-color: #2d6a4f;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-size: 1.1em;
+        font-weight: bold;
+        text-align: center;
+        display: inline-block;
+        margin-top: 20px;
+        transition: background-color 0.3s ease;
+      }
+
+      .cta-button:hover {
+        background-color: #218c53;
+        cursor: pointer;
       }
     </style>
   </head>
   <body>
-    <h1>
-      Current Cycle Order History for <%= output.name %> with customer ID: (<%=
-      output.customerId %>)
-    </h1>
-    <% if (parseInt(output.discount)) { %> You have attained a discount of <%=
-    output.discount %>% on your total billed amount. <% } %>
-    <div class="date-row">
-      <table class="order-table">
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Order</th>
-            <th>Amount</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% for (const [date, skus] of Object.entries(output.dates)) { %> <%
-          let allZero = Object.values(skus).every(qty => qty.trim() === ""); %>
-          <% if (!allZero) { %>
-          <tr>
-            <td><%= date %></td>
-            <% let skuOutput = Object.entries(skus).filter(([skuCode, qty]) =>
-            (qty.trim() !== "" && skuCode !== "MSC")).map(([skuCode, qty]) =>
-            qty + " " + (output?.skusDetail?.[skuCode]?.[0] ||
-            skuCode)).join(","); %>
-            <td><%= skuOutput %></td>
-            <% let amountTotal = 0; %> <%
-            Object.entries(skus).filter(([skuCode,qty]) => (qty.trim() !==
-            "")).forEach(([skuCode, qty]) => { %> <%amountTotal +=
-            (parseInt(qty) * ((parseInt(output?.isSub) ?
-            output?.skusDetail?.[skuCode]?.[2] :
-            output?.skusDetail?.[skuCode]?.[1])|| 1000)); %> <% }) %>
-            <td><%= amountTotal %></td>
-          </tr>
-          <% } %> <% } %>
-        </tbody>
-      </table>
+    <div class="container">
+      <div class="header">
+        <h1>Order History for <%= output.name %></h1>
+        <p>Customer ID: <%= output.customerId %></p>
+      </div>
+
+      <div class="order-table-container">
+        <table class="order-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Order</th>
+              <th>Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% var billedAmount = 0 %> <% for (const [date, skus] of
+            Object.entries(output.dates)) { %> <% let allZero =
+            Object.values(skus).every(qty => qty.trim() === ""); %> <% if
+            (!allZero) { %>
+            <tr>
+              <td><%= date %></td>
+              <% let skuOutput = Object.entries(skus).filter(([skuCode, qty]) =>
+              (qty.trim() !== "" && skuCode !== "MSC")).map(([skuCode, qty]) =>
+              qty + " " + (output?.skusDetail?.[skuCode]?.[0] ||
+              skuCode)).join(","); %>
+              <td><%= skuOutput %></td>
+              <% let amountTotal = 0; %> <%
+              Object.entries(skus).filter(([skuCode, qty]) => (qty.trim() !==
+              "")).forEach(([skuCode, qty]) => { %> <% amountTotal +=
+              (parseInt(qty) * ((parseInt(output?.isSub) ?
+              output?.skusDetail?.[skuCode]?.[2] :
+              output?.skusDetail?.[skuCode]?.[1]) || 1000)); %> <% }) %> <%
+              billedAmount += parseInt(amountTotal) %>
+              <td><%= amountTotal %></td>
+            </tr>
+            <% } %> <% } %>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="order-summary">
+        <h2>Order Summary</h2>
+        <% for(const [code, detail] of Object.entries(output.skusDetail)) { %>
+        <% if (parseInt(detail?.[3]) || 0) { %>
+        <div class="sku-details">
+          <span><%= detail?.[0] %></span>: <%= detail?.[3] %> (Rs. <%=
+          (parseInt(output?.isSub) ? detail?.[2] : detail?.[1]) %> per item)
+        </div>
+        <% } %> <% } %>
+
+        <p class="total-amount">
+          Total Amount for this cycle: <%= billedAmount %>
+        </p>
+
+        <% if (parseInt(output?.discount.trim()) !== 0) { %>
+        <div class="discount-info">
+          Discount applied: <%= output?.discount %>% <br />
+          Final billed amount: <%= (parseInt(billedAmount) / 100) * (100 -
+          parseInt(output?.discount)) %>
+        </div>
+        <% } %>
+      </div>
+
+      <div class="note">
+        <p>
+          <span>Thank you for choosing our healthy, nourishing meals!</span
+          ><br />
+          We are committed to providing fresh, wholesome, and nutritious food to
+          support your wellness journey. <br />
+          For any questions or assistance, reach us at:
+          <a href="tel:+919310864432">+919310864432</a>.
+        </p>
+      </div>
+
+      <a href="#" class="cta-button">Take to top</a>
     </div>
   </body>
 </html>

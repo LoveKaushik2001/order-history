@@ -39,10 +39,13 @@ app.get("/", async (req, res) => {
   const metaInfo = fetchedSheet.slice(0, 1)[0];
   const datesHead = fetchedSheet.slice(1, 2)[0];
   const heads = fetchedSheet.slice(2, 3)[0];
-  const entries = fetchedSheet.slice(4);
-
+  const productStartingRow = 4;
+  const entries = fetchedSheet.slice(productStartingRow);
   const skusNumber = getSkusNumber(datesHead);
-  const skusNameCodes = heads.slice(2, skusNumber + 2);
+  const skusNameCodes = heads.slice(
+    productStartingRow,
+    skusNumber + productStartingRow
+  );
   const skusDetail = getSkusDetail(metaInfo);
   const customerIndex = entries.findIndex(
     (entry) =>
@@ -60,17 +63,27 @@ app.get("/", async (req, res) => {
   output["isSub"] = customerInfo[2];
   output["discount"] = customerInfo[3];
   const dates = {};
-  let idx = 4;
+  let idx = productStartingRow;
   while (idx < customerInfo.length - 1) {
     const currDayOrders = {};
-    skusNameCodes.forEach(
-      (code, codeIndex) => (currDayOrders[code] = customerInfo[idx + codeIndex])
-    );
+    skusNameCodes.forEach((code, codeIndex) => {
+      currDayOrders[code] = customerInfo[idx + codeIndex];
+      // Calculating total products mention here
+      if (
+        currDayOrders[code].trim()?.length &&
+        output["skusDetail"]?.[code]?.length
+      ) {
+        output["skusDetail"]?.[code]?.length < 4
+          ? output["skusDetail"][code].push(parseInt(currDayOrders[code]))
+          : (output["skusDetail"][code][3] += parseInt(currDayOrders[code]));
+      }
+    });
     dates[datesHead[idx]] = currDayOrders;
     idx += skusNumber;
   }
   output["dates"] = dates;
   res.render("index", { output });
+  // res.send(output);
 });
 
 function getSkusNumber(data) {
