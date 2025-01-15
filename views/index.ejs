@@ -145,6 +145,22 @@
         color: #e74c3c; /* Red color to highlight discount information */
       }
 
+      /* New Savings Section */
+      .savings-info {
+        background-color: #fff3e0;
+        padding: 15px;
+        margin-top: 20px;
+        border-radius: 8px;
+        color: #e74c3c;
+        font-weight: 600;
+        font-size: 1.2em;
+      }
+
+      .savings-info span {
+        font-weight: bold;
+        color: #27ae60; /* Green for subscription savings */
+      }
+
       /* Notes Section */
       .note {
         margin-top: 50px;
@@ -227,7 +243,8 @@
             </tr>
           </thead>
           <tbody>
-            <% var billedAmount = 0 %> <% for (const [date, skus] of
+            <% var billedAmount = 0 %> <% var nonSubAmount = 0 %> <% var
+            subAmount = 0 %> <% for (const [date, skus] of
             Object.entries(output.dates)) { %> <% let allZero =
             Object.values(skus).every(qty => qty.trim() === ""); %> <% if
             (!allZero) { %>
@@ -238,14 +255,22 @@
               qty + " " + (output?.skusDetail?.[skuCode]?.[0] ||
               skuCode)).join(","); %>
               <td><%= skuOutput %></td>
-              <% let amountTotal = 0; %> <%
-              Object.entries(skus).filter(([skuCode, qty]) => (qty.trim() !==
-              "")).forEach(([skuCode, qty]) => { %> <% amountTotal +=
-              (parseInt(qty) * ((parseInt(output?.isSub) ?
-              output?.skusDetail?.[skuCode]?.[2] :
-              output?.skusDetail?.[skuCode]?.[1]) || 1000)); %> <% }) %> <%
-              billedAmount += parseInt(amountTotal) %>
-              <td><%= amountTotal %></td>
+              <% let subAmountForThatDay = 0; let nonSubAmountForThatDay = 0; %>
+              <% Object.entries(skus).filter(([skuCode, qty]) => (qty.trim() !==
+              "")).forEach(([skuCode, qty]) => { %>
+              <!-- NonSub amount -->
+              <% nonSubAmountForThatDay += (parseInt(qty) *
+              (parseInt(output?.skusDetail?.[skuCode]?.[1] || 1000)))%>
+              <!-- Sub amount -->
+              <% subAmountForThatDay += (parseInt(qty) *
+              (parseInt(output?.skusDetail?.[skuCode]?.[2])))%> <% }) %> <%
+              billedAmount += (parseInt(output?.isSub) ? subAmountForThatDay :
+              nonSubAmountForThatDay) %> <% subAmount += subAmountForThatDay %>
+              <% nonSubAmount += nonSubAmountForThatDay %>
+              <td>
+                <%= parseInt(output?.isSub) ? subAmountForThatDay :
+                nonSubAmountForThatDay %>
+              </td>
             </tr>
             <% } %> <% } %>
           </tbody>
@@ -269,8 +294,17 @@
         <% if (parseInt(output?.discount.trim()) !== 0) { %>
         <div class="discount-info">
           Discount applied: <%= output?.discount %>% <br />
-          Final billed amount: <%= (parseInt(billedAmount) / 100) * (100 -
-          parseInt(output?.discount)) %>
+          Final billed amount: <%= Math.round((parseInt(billedAmount) / 100) *
+          (100 - parseInt(output?.discount))) %>
+        </div>
+        <% } %>
+
+        <!-- New Section for Savings -->
+        <% if (!parseInt(output?.isSub)) { %>
+        <div class="savings-info">
+          You could have saved around
+          <span>Rs. <%= (parseInt(nonSubAmount) - parseInt(subAmount)) %></span>
+          over your billed amount if you were on a subscription plan!
         </div>
         <% } %>
       </div>

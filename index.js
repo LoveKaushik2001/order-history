@@ -83,7 +83,6 @@ app.get("/", async (req, res) => {
   }
   output["dates"] = dates;
   res.render("index", { output });
-  // res.send(output);
 });
 
 function getSkusNumber(data) {
