@@ -287,15 +287,20 @@
         </div>
         <% } %> <% } %>
 
+        <p>Total Billed Amount for this cycle: <%= billedAmount %></p>
+        <p>Previous Dues amount: <%= output.dues %></p>
+        <p>Previous Paid amount: <%= output.paid %></p>
         <p class="total-amount">
-          Total Amount for this cycle: <%= billedAmount %>
+          Net Amount after settling previous dues and payments: <%=
+          (parseInt(billedAmount) + parseInt(output.dues) -
+          parseInt(output.paid)) %>
         </p>
-
         <% if (parseInt(output?.discount.trim()) !== 0) { %>
         <div class="discount-info">
-          Discount applied: <%= output?.discount %>% <br />
-          Final billed amount: <%= Math.round((parseInt(billedAmount) / 100) *
-          (100 - parseInt(output?.discount))) %>
+          **Discount applied<br />
+          Final amount after discount to pay: <%=
+          Math.round(((parseInt(billedAmount) + parseInt(output.dues) -
+          parseInt(output.paid)) / 100) * (100 - parseInt(output?.discount))) %>
         </div>
         <% } %>
 

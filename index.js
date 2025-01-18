@@ -39,7 +39,7 @@ app.get("/", async (req, res) => {
   const metaInfo = fetchedSheet.slice(0, 1)[0];
   const datesHead = fetchedSheet.slice(1, 2)[0];
   const heads = fetchedSheet.slice(2, 3)[0];
-  const productStartingRow = 4;
+  const productStartingRow = 6;
   const entries = fetchedSheet.slice(productStartingRow);
   const skusNumber = getSkusNumber(datesHead);
   const skusNameCodes = heads.slice(
@@ -62,6 +62,8 @@ app.get("/", async (req, res) => {
   output["skusDetail"] = skusDetail;
   output["isSub"] = customerInfo[2];
   output["discount"] = customerInfo[3];
+  output["dues"] = customerInfo[4];
+  output["paid"] = customerInfo[5];
   const dates = {};
   let idx = productStartingRow;
   while (idx < customerInfo.length - 1) {
