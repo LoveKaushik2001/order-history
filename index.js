@@ -39,7 +39,7 @@ app.get("/", async (req, res) => {
   const metaInfo = fetchedSheet.slice(0, 1)[0];
   const datesHead = fetchedSheet.slice(1, 2)[0];
   const heads = fetchedSheet.slice(2, 3)[0];
-  const productStartingRow = 6;
+  const productStartingRow = 7;
   const entries = fetchedSheet.slice(productStartingRow);
   const skusNumber = getSkusNumber(datesHead);
   const skusNameCodes = heads.slice(
@@ -64,6 +64,7 @@ app.get("/", async (req, res) => {
   output["discount"] = customerInfo[3];
   output["dues"] = customerInfo[4];
   output["paid"] = customerInfo[5];
+  output["netAmount"] = customerInfo[6];
   const dates = {};
   let idx = productStartingRow;
   while (idx < customerInfo.length - 1) {
@@ -84,6 +85,10 @@ app.get("/", async (req, res) => {
     idx += skusNumber;
   }
   output["dates"] = dates;
+  const startDate = datesHead.find((date) => date.trim() !== "");
+  const endDate = datesHead[datesHead.length - skusNumber - 1];
+  output["startDate"] = startDate;
+  output["endDate"] = endDate;
   res.render("index", { output });
 });
 

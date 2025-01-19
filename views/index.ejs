@@ -231,6 +231,7 @@
       <div class="header">
         <h1>Order History for <%= output.name %></h1>
         <p>Customer ID: <%= output.customerId %></p>
+        <p>Cycle: <%= output.startDate %> - <%= output.endDate %></p>
       </div>
 
       <div class="order-table-container">
@@ -286,23 +287,20 @@
           (parseInt(output?.isSub) ? detail?.[2] : detail?.[1]) %> per item)
         </div>
         <% } %> <% } %>
-
-        <p>Total Billed Amount for this cycle: <%= billedAmount %></p>
+        <!-- <p>Total Billed Amount for this cycle: <%= billedAmount %></p> -->
+        <div class="discount-info">
+          <% if (parseInt(output?.discount.trim()) !== 0) { %> **Discount
+          applied<br />
+          <% } %> Total amount for this cycle: <%=
+          Math.round((parseInt(billedAmount) / 100) * (100 -
+          parseInt(output?.discount))) %>
+        </div>
         <p>Previous Dues amount: <%= output.dues %></p>
         <p>Previous Paid amount: <%= output.paid %></p>
         <p class="total-amount">
-          Net Amount after settling previous dues and payments: <%=
-          (parseInt(billedAmount) + parseInt(output.dues) -
-          parseInt(output.paid)) %>
+          Net Amount to pay after settling all previous dues and payments: <%=
+          output.netAmount %>
         </p>
-        <% if (parseInt(output?.discount.trim()) !== 0) { %>
-        <div class="discount-info">
-          **Discount applied<br />
-          Final amount after discount to pay: <%=
-          Math.round(((parseInt(billedAmount) + parseInt(output.dues) -
-          parseInt(output.paid)) / 100) * (100 - parseInt(output?.discount))) %>
-        </div>
-        <% } %>
 
         <!-- New Section for Savings -->
         <% if (!parseInt(output?.isSub)) { %>
