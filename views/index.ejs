@@ -252,8 +252,8 @@
             <tr>
               <td><%= date %></td>
               <% let skuOutput = Object.entries(skus).filter(([skuCode, qty]) =>
-              (qty.trim() !== "" && skuCode !== "MSC" && parseInt(qty.trim())
-              !== 0)).map(([skuCode, qty]) => qty + " " +
+              (qty.trim() !== "" && skuCode !== "MSC" && parseInt(qty.trim() ||
+              0) !== 0)).map(([skuCode, qty]) => qty + " " +
               (output?.skusDetail?.[skuCode]?.[0] || skuCode)).join(","); %>
               <td><%= skuOutput %></td>
               <% let subAmountForThatDay = 0; let nonSubAmountForThatDay = 0; %>
@@ -290,11 +290,11 @@
         <% } %> <% } %>
         <!-- <p>Total Billed Amount for this cycle: <%= billedAmount %></p> -->
         <div class="discount-info">
-          <% if (parseInt(output?.discount.trim()) !== 0) { %> **Discount
-          applied<br />
+          <% if (parseInt(output?.discount.trim()) !== 0 &&
+          output?.discount.trim() !== '') { %> **Discount applied<br />
           <% } %> Total amount for this cycle: <%=
           Math.round((parseInt(billedAmount) / 100) * (100 -
-          parseInt(output?.discount))) %>
+          (parseInt((output?.discount).trim()) || 0))) %>
         </div>
         <p>Previous Dues amount: <%= output.dues %></p>
         <p>Previous Paid amount: <%= output.paid %></p>
@@ -309,6 +309,15 @@
           You could have saved around
           <span>Rs. <%= (parseInt(nonSubAmount) - parseInt(subAmount)) %></span>
           over your billed amount if you were on a subscription plan!
+        </div>
+        <% } else { %>
+        <div class="savings-info">
+          You have saved around
+          <span>Rs. <%= (parseInt(nonSubAmount) - parseInt(subAmount)) %></span>
+          over your billed amount due to your subscription plan!
+          <div>
+            <span>Stay Regular save your money and improve your health</span>
+          </div>
         </div>
         <% } %>
       </div>

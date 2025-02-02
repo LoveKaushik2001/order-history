@@ -69,7 +69,8 @@ app.get("/", async (req, res) => {
   let idx = productStartingRow;
   while (idx < customerInfo.length - 1) {
     const currDayOrders = {};
-    skusNameCodes.forEach((code, codeIndex) => {
+    const codesForCurrDay = heads.slice(idx, skusNumber + idx);
+    codesForCurrDay.forEach((code, codeIndex) => {
       currDayOrders[code] = customerInfo[idx + codeIndex];
       // Calculating total products mention here
       if (
