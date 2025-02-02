@@ -252,13 +252,14 @@
             <tr>
               <td><%= date %></td>
               <% let skuOutput = Object.entries(skus).filter(([skuCode, qty]) =>
-              (qty.trim() !== "" && skuCode !== "MSC")).map(([skuCode, qty]) =>
-              qty + " " + (output?.skusDetail?.[skuCode]?.[0] ||
-              skuCode)).join(","); %>
+              (qty.trim() !== "" && skuCode !== "MSC" && parseInt(qty.trim())
+              !== 0)).map(([skuCode, qty]) => qty + " " +
+              (output?.skusDetail?.[skuCode]?.[0] || skuCode)).join(","); %>
               <td><%= skuOutput %></td>
               <% let subAmountForThatDay = 0; let nonSubAmountForThatDay = 0; %>
               <% Object.entries(skus).filter(([skuCode, qty]) => (qty.trim() !==
-              "")).forEach(([skuCode, qty]) => { %>
+              "" && parseInt(qty.trim()) !== 0)).forEach(([skuCode, qty]) => {
+              %>
               <!-- NonSub amount -->
               <% nonSubAmountForThatDay += (parseInt(qty) *
               (parseInt(output?.skusDetail?.[skuCode]?.[1] || 1000)))%>
